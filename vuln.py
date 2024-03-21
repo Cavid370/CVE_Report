@@ -19,9 +19,8 @@ def vuln_finder(cve):
         if not a:
             print(rf"We cant find cve either in https://nvd.nist.gov/vuln/detail/{cve} !!")
         else:
-            related_exp(cve)
+
             print(rf"we found it in https://nvd.nist.gov/vuln/detail/{cve}")
-        related_exp(cve)
     else:
         if not cve_parse_json(cve):
             print(r"We cant find cve in https://services.nvd.nist.gov/rest/json/cves/2.0 !!")
@@ -38,7 +37,6 @@ def vuln_finder(cve):
                 print(references)
             return id_element, severity, description, vector, references
         else:
-            related_exp(cve)
             print(rf"we found it in https://nvd.nist.gov/vuln/detail/{cve}")
     return
 
@@ -104,27 +102,30 @@ def vuln_nist(cve):
     if exists == "CVE ID Not Found":
         return False
     else:
-        id_vuln = soup.find("span", {"data-testid": "page-header-vuln-id"}).text.strip()
-        if soup.find("a", id="Cvss3NistCalculatorAnchor") == None:
-            severity_func = soup.find("a", id="Cvss2CalculatorAnchor").text.strip()
-            vector_func = soup.find("span", {"class": "tooltipCvss2NistMetrics"}).text.strip()
-        else:
-            severity_func = soup.find("a", id="Cvss3NistCalculatorAnchor").text.strip()
-            vector_func = soup.find("span", {"data-testid": "vuln-cvss3-nist-vector"}).text.strip()
-        description_func = soup.find("p", {"data-testid": "vuln-description"}).text.strip()
-
-        #   Existing related links
-        ref_links = []
-        link_number = 0  # Start with link number 1
-        while True:
-            link = soup.find("td", {"data-testid": f"vuln-hyperlinks-link-{link_number}"})
-            if link is not None:
-                ref_links.append(link.text.strip())
-                link_number += 1
+        try:
+            id_vuln = soup.find("span", {"data-testid": "page-header-vuln-id"}).text.strip()
+            if soup.find("a", id="Cvss3NistCalculatorAnchor") == None:
+                severity_func = soup.find("a", id="Cvss2CalculatorAnchor").text.strip()
+                vector_func = soup.find("span", {"class": "tooltipCvss2NistMetrics"}).text.strip()
             else:
-                break  # Exit the loop when no more links are found
-        related_exp(cve)
-        return id_vuln, severity_func, description_func, vector_func, ref_links
+                severity_func = soup.find("a", id="Cvss3NistCalculatorAnchor").text.strip()
+                vector_func = soup.find("span", {"data-testid": "vuln-cvss3-nist-vector"}).text.strip()
+            description_func = soup.find("p", {"data-testid": "vuln-description"}).text.strip()
+
+            #   Existing related links
+            ref_links = []
+            link_number = 0  # Start with link number 1
+            while True:
+                link = soup.find("td", {"data-testid": f"vuln-hyperlinks-link-{link_number}"})
+                if link is not None:
+                    ref_links.append(link.text.strip())
+                    link_number += 1
+                else:
+                    break  # Exit the loop when no more links are found
+            related_exp(cve)
+            return id_vuln, severity_func, description_func, vector_func, ref_links
+        except:
+            print("There is nothing like that")
 
 
 def related_exp(cve):
@@ -154,4 +155,4 @@ def related_exp(cve):
             print(verified)
 
 
-vuln_finder("CVE-2013-1313")
+vuln_finder("CVE-2021-44228")
