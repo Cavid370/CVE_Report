@@ -1,13 +1,5 @@
-import requests
-# from bs4 import BeautifulSoup
 from datetime import datetime
-# from selenium import webdriver
-# from selenium.webdriver.common.by import By
-
-import json
-import requests
-
-
+import vuln
 
 
 if __name__ == "__main__":
@@ -47,4 +39,6 @@ if __name__ == "__main__":
 
         # This part executes only if both year and number are 4 characters long
         cve_id = "CVE-" + str(cve_input_year) + "-" + str(cve_input_number)
+        vuln.vuln_finder(cve_id)
+        print(vuln.vuln_finder(cve_id))
         break  # Exit the main loop
