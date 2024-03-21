@@ -5,3 +5,98 @@
 "metrics":{"cvssMetricV2":[{"source":"nvd@nist.gov","type":"Primary","cvssData":{"version":"2.0","vectorString":"AV:N\/AC:L\/Au:N\/C:C\/I:C\/A:C","accessVector":"NETWORK","accessComplexity":"LOW","authentication":"NONE","confidentialityImpact":"COMPLETE","integrityImpact":"COMPLETE","availabilityImpact":"COMPLETE","baseScore":10.0},"baseSeverity":"HIGH","exploitabilityScore":10.0,"impactScore":10.0,"acInsufInfo":false,"obtainAllPrivilege":true,"obtainUserPrivilege":false,"obtainOtherPrivilege":false,"userInteractionRequired":false}]},
 
 ################   Deməli bir bir gedəcək yoxlayacaq hər birini əgər heç birində tapmasa desinki belə birşey yoxdu əgər tapsa belə birşeyi desinki flan db da flan məlumatlar var list şəklində qaytarsın onları
+
+
+
+
+<tbody>
+<tr class="text-center">
+<td>
+<a href="/">
+                            Exploits
+                        </a>
+</td>
+<td>
+<a href="/search">
+                            Search Exploit-DB
+                        </a>
+</td>
+<td>
+<a href="https://www.offsec.com/" rel="noopener" target="_blank">
+                            OffSec
+                        </a>
+</td>
+<td>
+<a href="https://www.offsec.com/courses-and-certifications/" rel="noopener" target="_blank">Courses and Certifications
+                        </a>
+</td>
+</tr>
+<tr class="text-center">
+<td>
+<a href="/google-hacking-database">
+                            Google Hacking
+                        </a>
+</td>
+<td>
+<a href="/submit">
+                            Submit Entry
+                        </a>
+</td>
+<td>
+<a href="https://www.kali.org/" rel="noopener" target="_blank">
+                            Kali Linux
+                        </a>
+</td>
+<td>
+<a href="https://www.offsec.com/learn/" rel="noopener" target="_blank">Learn Subscriptions
+                        </a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="/papers">
+                            Papers
+                        </a>
+</td>
+<td>
+<a href="/serchsploit">
+                            SearchSploit Manual
+                        </a>
+</td>
+<td>
+<a href="https://www.vulnhub.com/" rel="noopener" target="_blank">VulnHub
+                        </a>
+</td>
+<td>
+<a href="https://www.offsec.com/cyber-range/" rel="noopener" target="_blank">OffSec Cyber Range
+                        </a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="/shellcodes">
+                            Shellcodes
+                        </a>
+</td>
+<td>
+<a href="/statistics">
+                            Exploit Statistics
+                        </a>
+</td>
+<td></td>
+<td>
+<a href="https://www.offsec.com/labs/" rel="noopener" target="_blank">Proving Grounds
+                        </a>
+</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>
+<a href="https://www.offsec.com/penetration-testing/" rel="noopener" target="_blank">Penetration Testing Services
+                        </a>
+</td>
+</tr>
+</tbody>
+<h2>ERROR: Couldn't find 'CVE-1999-0000'</h2>
