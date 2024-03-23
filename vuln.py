@@ -6,44 +6,44 @@ from io import StringIO
 
 def vuln_finder(cve):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'}
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
+    }
     request = requests.get('https://cve.mitre.org/cgi-bin/cvename.cgi?name=' + cve, headers=headers)
     soup = BeautifulSoup(request.text, 'html.parser')
     exists = soup.find("h2").text.strip()
-    print("hello welcome to my channel")
+    result = ""
     if exists == f"ERROR: Couldn't find '{cve}'":
-        print(fr"There is no cve in this id in 'https://cve.mitre.org/cgi-bin/cvename.cgi?name={cve}'")
+        result += fr"There is no CVE with ID '{cve}' on 'https://cve.mitre.org/cgi-bin/cvename.cgi?name={cve}'" + '\n'
         if not cve_parse_json(cve):
-            print(r"We cant find cve in https://services.nvd.nist.gov/rest/json/cves/2.0 !!")
+            result += r"We can't find CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
         a = vuln_nist(cve)
         if not a:
-            print(rf"We cant find cve either in https://nvd.nist.gov/vuln/detail/{cve} !!")
+            result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}' !!" + '\n'
         else:
-
-            print(rf"we found it in https://nvd.nist.gov/vuln/detail/{cve}")
+            result += rf"We found it in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
     else:
         if not cve_parse_json(cve):
-            print(r"We cant find cve in https://services.nvd.nist.gov/rest/json/cves/2.0 !!")
+            result += r"We can't find CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
             a = vuln_nist(cve)
             if not a:
-                print(rf"We cant find cve either in https://nvd.nist.gov/vuln/detail/{cve} !!")
+                result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}' !!" + '\n'
                 return "Nothing found"
             else:
+                result += rf"We found it CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
                 id_element, severity, description, vector, references = a
-                print(id_element)
-                print(severity)
-                print(description)
-                print(vector)
-                print(references)
-            return id_element, severity, description, vector, references
+                result += f"ID: {id_element}\n"
+                result += f"Severity: {severity}\n"
+                result += f"Description: {description}\n"
+                result += f"Vector: {vector}\n"
+                result += f"References: {references}\n"
         else:
-            print(rf"we found it in https://nvd.nist.gov/vuln/detail/{cve}")
-    return
+            result += rf"We found it CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
+    return result
 
 
 def cve_parse_json(cve_id):
     api_url = r"https://services.nvd.nist.gov/rest/json/cves/2.0"
-    # Send GET request and handle response
+    # Send GET request
     response = requests.get(api_url)
     # Check for successful response
     if response.status_code == 200:
@@ -63,7 +63,7 @@ def cve_parse_json(cve_id):
                 references = cve.get("references")
                 print(sourceIdentifier)
 
-                # CVSS2 SCORE
+                # CVSS2 score
                 metrics = cve.get("metrics")
                 metrics_data = metrics["cvssMetricV2"][0]["cvssData"]
                 cvss_score = metrics_data["baseScore"]
@@ -76,19 +76,16 @@ def cve_parse_json(cve_id):
                 severity = metrics["cvssMetricV2"][0]["baseSeverity"]
 
                 print(
-                    f'{cvss_score} {severity}, \nAccess vector: {access_vector}, Access Complexity: '
-                    f'{access_complex}, Privileges required: {authentication}, Confidentiality Impact:'
-                    f' {confidentialityImpact}, Integrity Impact: {integrityImpact},'
-                    f' Availability Impact: {availabilityImpact}')
+                    f'{cvss_score} {severity}, \nAccess vector: {access_vector}, Access Complexity: {access_complex}, Privileges required: {authentication}, Confidentiality Impact: {confidentialityImpact}, Integrity Impact: {integrityImpact}, Availability Impact: {availabilityImpact}')
                 for ref_url in references:
                     print(ref_url["url"])
-                #   WE HAVE TO ADD URL DESCRIPTION FOR URL
+                related_exp(cve_id)
                 return cve_id, sourceIdentifier, descriptions1, cvss_score, severity, access_vector, access_complex, authentication, confidentialityImpact, integrityImpact, availabilityImpact  # Exit the function once CVE is found
-        related_exp(cve_id)
+
         return False
+
     else:
         print(f"Error: API request failed with status code {response.status_code}")
-
         return False
 
 
@@ -104,15 +101,17 @@ def vuln_nist(cve):
     else:
         try:
             id_vuln = soup.find("span", {"data-testid": "page-header-vuln-id"}).text.strip()
+            # Find CVSS2 data
             if soup.find("a", id="Cvss3NistCalculatorAnchor") == None:
                 severity_func = soup.find("a", id="Cvss2CalculatorAnchor").text.strip()
                 vector_func = soup.find("span", {"class": "tooltipCvss2NistMetrics"}).text.strip()
+            # Find CVSS3 data
             else:
                 severity_func = soup.find("a", id="Cvss3NistCalculatorAnchor").text.strip()
                 vector_func = soup.find("span", {"data-testid": "vuln-cvss3-nist-vector"}).text.strip()
             description_func = soup.find("p", {"data-testid": "vuln-description"}).text.strip()
-
-            #   Existing related links
+            related_exp(cve)
+            # Existing related links
             ref_links = []
             link_number = 0  # Start with link number 1
             while True:
@@ -122,7 +121,6 @@ def vuln_nist(cve):
                     link_number += 1
                 else:
                     break  # Exit the loop when no more links are found
-            related_exp(cve)
             return id_vuln, severity_func, description_func, vector_func, ref_links
         except:
             print("There is nothing like that")
@@ -142,6 +140,7 @@ def related_exp(cve):
     # Extract all CVE IDs from your data
     cve1 = cve
     # Iterate over each row in the GitLab data and find matches with your CVE IDs
+    a = 0
     for row in gitlab_reader:
         if cve1 in row["codes"]:
             related_id = row["id"]
@@ -152,7 +151,10 @@ def related_exp(cve):
             verified = row["verified"]
             print(codes, related_id, file, description1, source_url)
             print("Download link: ", f"https://www.exploit-db.com/exploits/{related_id}")
-            print(verified)
-
-
-vuln_finder("CVE-2021-44228")
+            if verified == 1:
+                print("Verified")
+            else:
+                print("Not verified")
+            a += 1
+    if a == 0:
+        print("There is no related exploit found!")
