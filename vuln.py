@@ -12,33 +12,32 @@ def vuln_finder(cve):
     soup = BeautifulSoup(request.text, 'html.parser')
     exists = soup.find("h2").text.strip()
     result = ""
+    cve_parse_result = cve_parse_json(cve)
+    vuln_nist_result = vuln_nist(cve)
     if exists == f"ERROR: Couldn't find '{cve}'":
         result += fr"There is no CVE with ID '{cve}' on 'https://cve.mitre.org/cgi-bin/cvename.cgi?name={cve}'" + '\n'
-        if not cve_parse_json(cve):
+        if not cve_parse_result:
             result += r"We can't find CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
-        a = vuln_nist(cve)
-        if not a:
+
+        if not vuln_nist_result:
             result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}' !!" + '\n'
         else:
-            result += rf"We found it in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
+            result += rf"We found it CVE in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
+            return result
     else:
-        if not cve_parse_json(cve):
+
+        if not cve_parse_result:
             result += r"We can't find CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
-            a = vuln_nist(cve)
-            if not a:
-                result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}' !!" + '\n'
-                return "Nothing found"
+            if not vuln_nist_result:
+                result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
+                result += "Nothing found"
+                return result
             else:
-                result += rf"We found it CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
-                id_element, severity, description, vector, references = a
-                result += f"ID: {id_element}\n"
-                result += f"Severity: {severity}\n"
-                result += f"Description: {description}\n"
-                result += f"Vector: {vector}\n"
-                result += f"References: {references}\n"
+                result += rf"We found it CVE in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
+                return result
         else:
             result += rf"We found it CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
-    return result
+            return result
 
 
 def cve_parse_json(cve_id):
@@ -83,6 +82,7 @@ def cve_parse_json(cve_id):
                 return cve_id, sourceIdentifier, descriptions1, cvss_score, severity, access_vector, access_complex, authentication, confidentialityImpact, integrityImpact, availabilityImpact  # Exit the function once CVE is found
 
         return False
+
 
     else:
         print(f"Error: API request failed with status code {response.status_code}")
@@ -140,21 +140,28 @@ def related_exp(cve):
     # Extract all CVE IDs from your data
     cve1 = cve
     # Iterate over each row in the GitLab data and find matches with your CVE IDs
-    a = 0
+    exploits = []
     for row in gitlab_reader:
         if cve1 in row["codes"]:
+            exploits_child = []
             related_id = row["id"]
             file = row["file"]
             description1 = row["description"]
             codes = row["codes"]
             source_url = row["source_url"]
             verified = row["verified"]
-            print(codes, related_id, file, description1, source_url)
-            print("Download link: ", f"https://www.exploit-db.com/exploits/{related_id}")
-            if verified == 1:
-                print("Verified")
-            else:
-                print("Not verified")
-            a += 1
-    if a == 0:
-        print("There is no related exploit found!")
+            download_link = f"https://www.exploit-db.com/exploits/{related_id}"
+            exploits_child.append(related_id)
+            exploits_child.append(file)
+            exploits_child.append(description1)
+            exploits_child.append(codes)
+            exploits_child.append(source_url)
+            exploits_child.append(verified)
+            exploits_child.append(download_link)
+
+            exploits.append(exploits_child)
+
+    if exploits == []:
+        b = "There is no related exploit"
+        return b
+    return exploits

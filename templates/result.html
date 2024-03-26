@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add your meta tags, title, and stylesheets here -->
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">CVE Finder</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>ID: {{ cve_id }}</h6>
+                        <p>Severity: {{ severity }}</p>
+                        <p>Description: {{ description }}</p>
+                        <!-- Add more fields here as needed -->
+                        <a href="{{ source_url }}" target="_blank">Source URL</a>
+                        <h6>Related Exploits</h6>
+                        <ul>
+                            {% for exploit in relat_exp %}
+                                <li>{{ exploit }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
