@@ -21,29 +21,44 @@ Navigate to the directory containing the script.
 Run the script by executing the following command:
 
 Copy code
+
 python cve_validator.py
+
 Follow the on-screen instructions to input a CVE ID.
 
 If the provided CVE ID is valid, the script will display information about the vulnerability associated with that CVE ID. If the input is invalid, the script will prompt you to enter a valid CVE ID.
 
 Input Format
+
 The script expects the user to input a CVE ID following one of the following formats:
 
 CVE-YYYY-NNNN
+
 CVE-YYYY-NNNNNN
+
 Where:
 
 YYYY represents the year of the vulnerability disclosure.
+
 NNNN represents the sequential number assigned to the vulnerability within the year.
+
 Example
+
 lua
+
 Copy code
+
 Please follow the format 'CVE-YYYY-NNNN' or 'CVE-YYYY-NNNNNN': CVE-2022-1234
+
 Output:
 
 csharp
+
 Copy code
+
 [Information about CVE-2022-1234]
+
 Contributing
+
 Contributions are welcome! If you find any issues with the script or have suggestions for improvements, please open an issue or submit a pull request.
 
