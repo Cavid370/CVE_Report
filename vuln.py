@@ -53,14 +53,10 @@ def cve_parse_json(cve_id):
         for vulnerability in data.get("vulnerabilities", []):
             cve = vulnerability.get("cve", {})
             if cve.get("id") == cve_id:
-                print(f"{cve_id} exists in the JSON data.")
                 sourceIdentifier = cve.get("sourceIdentifier")
                 descriptions = cve.get("descriptions")
                 descriptions1 = descriptions[0]["value"]
-                print(f'Description: {descriptions1}')
-
                 references = cve.get("references")
-                print(sourceIdentifier)
 
                 # CVSS2 score
                 metrics = cve.get("metrics")
@@ -74,10 +70,6 @@ def cve_parse_json(cve_id):
                 availabilityImpact = metrics_data["availabilityImpact"]
                 severity = metrics["cvssMetricV2"][0]["baseSeverity"]
 
-                print(
-                    f'{cvss_score} {severity}, \nAccess vector: {access_vector}, Access Complexity: {access_complex}, Privileges required: {authentication}, Confidentiality Impact: {confidentialityImpact}, Integrity Impact: {integrityImpact}, Availability Impact: {availabilityImpact}')
-                for ref_url in references:
-                    print(ref_url["url"])
                 related_exp(cve_id)
                 return cve_id, sourceIdentifier, descriptions1, cvss_score, severity, access_vector, access_complex, authentication, confidentialityImpact, integrityImpact, availabilityImpact  # Exit the function once CVE is found
 

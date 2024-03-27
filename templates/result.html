@@ -1,30 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Add your meta tags, title, and stylesheets here -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; /* White background */
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background-color: #6a0dad; /* Purple background */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 400px;
+            padding: 20px;
+        }
+        .card-header {
+            background-color: #4b0082; /* Dark purple header */
+            color: #ffffff; /* White text */
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+        }
+        .card-body {
+            padding: 20px 0;
+        }
+        h5 {
+            margin: 0;
+            font-size: 20px;
+        }
+        h6 {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffffff; /* White text */
+        }
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #ffffff; /* White text */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 5px;
+            color: #ffffff; /* White text */
+        }
+        a {
+            color: #ffffff; /* White text */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">CVE Finder</h5>
-                    </div>
-                    <div class="card-body">
-                        <h6>ID: {{ cve_id }}</h6>
-                        <p>Severity: {{ severity }}</p>
-                        <p>Description: {{ description }}</p>
-                        <!-- Add more fields here as needed -->
-                        <a href="{{ source_url }}" target="_blank">Source URL</a>
-                        <h6>Related Exploits</h6>
-                        <ul>
-                            {% for exploit in relat_exp %}
-                                <li>{{ exploit }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE Finder</h5>
+            </div>
+            <div class="card-body">
+                <h6>ID: {{ cve_id }}</h6>
+                <p>Severity: {{ severity }}</p>
+                <p>Description: {{ description }}</p>
+                <a href="https://{{ source_url }}" target="_blank">Source URL</a>
+                <h6>Related Exploits</h6>
+                <ul>
+                    {% for exploit in relat_exp %}
+                        <li>{{ exploit }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
