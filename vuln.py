@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from io import StringIO
-
+import webbrowser
 
 def vuln_finder(cve):
     headers = {
@@ -96,10 +96,19 @@ def vuln_nist(cve):
             # Find CVSS2 data
             if soup.find("a", id="Cvss3NistCalculatorAnchor") == None:
                 severity_func = soup.find("a", id="Cvss2CalculatorAnchor").text.strip()
+                severity_parts = severity_func.split()
+                # Extract the severity and score
+                severity = severity_parts[1]
+                score = float(severity_parts[0])
+
                 vector_func = soup.find("span", {"class": "tooltipCvss2NistMetrics"}).text.strip()
             # Find CVSS3 data
             else:
                 severity_func = soup.find("a", id="Cvss3NistCalculatorAnchor").text.strip()
+                severity_parts = severity_func.split()
+                # Extract the severity and score
+                severity = severity_parts[1]
+                score = float(severity_parts[0])
                 vector_func = soup.find("span", {"data-testid": "vuln-cvss3-nist-vector"}).text.strip()
             description_func = soup.find("p", {"data-testid": "vuln-description"}).text.strip()
             related_exp(cve)
@@ -111,9 +120,11 @@ def vuln_nist(cve):
                 if link is not None:
                     ref_links.append(link.text.strip())
                     link_number += 1
+                    if link_number == 5:
+                        break  # it should be fix again. !!!!!!!
                 else:
                     break  # Exit the loop when no more links are found
-            return id_vuln, severity_func, description_func, vector_func, ref_links
+            return id_vuln, score, severity, description_func, vector_func, ref_links
         except:
             print("There is nothing like that")
 
@@ -137,23 +148,48 @@ def related_exp(cve):
         if cve1 in row["codes"]:
             exploits_child = []
             related_id = row["id"]
-            file = row["file"]
             description1 = row["description"]
-            codes = row["codes"]
-            source_url = row["source_url"]
             verified = row["verified"]
             download_link = f"https://www.exploit-db.com/exploits/{related_id}"
-            exploits_child.append(related_id)
-            exploits_child.append(file)
-            exploits_child.append(description1)
-            exploits_child.append(codes)
-            exploits_child.append(source_url)
-            exploits_child.append(verified)
-            exploits_child.append(download_link)
 
+            exploits_child.append(description1)
+            if verified == "1":
+                exploits_child.append("Verified")
+            elif verified == "0":
+                exploits_child.append("Not verified")
+            exploits_child.append(download_link)
             exploits.append(exploits_child)
 
     if exploits == []:
-        b = "There is no related exploit"
+        b = ["There is no related exploit"]
         return b
     return exploits
+
+
+# Function to open top references
+def open_top_references(cve_id):
+    # Define a list of reference URLs
+    reference_urls = [
+        f"https://nvd.nist.gov/vuln/detail/{cve_id}",
+        f"https://www.exploit-db.com/search?cve={cve_id}",
+        f"https://cve.mitre.org/cgi-bin/cvename.cgi?name={cve_id.lower()}",
+        f"https://vulners.com/search?query={cve_id}",
+        f"https://vulmon.com/vulnerabilitydetails?qid={cve_id}"
+    ]
+
+    # Open up to five top references
+    for url in reference_urls:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'}
+        try:
+            response = requests.head(url, allow_redirects=True,headers=headers )
+            if response.status_code == 200:
+                webbrowser.open_new_tab(url)
+            else:
+                print(f"Failed to open reference URL: {url} (Status code: {response.status_code})")
+        except Exception as e:
+            print(f"Failed to open reference URL: {url} ({e})")
+
+
+# Test the function
+

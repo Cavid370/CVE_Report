@@ -21,7 +21,8 @@
             background-color: #6a0dad; /* Purple background */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 400px;
+            width: 80%;
+            height: auto;
             padding: 20px;
         }
         .card-header {
@@ -73,9 +74,13 @@
             </div>
             <div class="card-body">
                 <h6>ID: {{ cve_id }}</h6>
+                <p>CVSS score: {{ cvss_score }}</p>
                 <p>Severity: {{ severity }}</p>
                 <p>Description: {{ description }}</p>
-                <a href="https://{{ source_url }}" target="_blank">Source URL</a>
+                {% for source_url in source_urls %}
+                        <li><a href="   {{ source_url }}" target="_blank">Source URL: {{ source_url }}</a></li>
+                {% endfor %}
+
                 <h6>Related Exploits</h6>
                 <ul>
                     {% for exploit in relat_exp %}
