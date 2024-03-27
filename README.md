@@ -2,7 +2,7 @@
 ![image](https://github.com/Cavid370/GROUP_E/assets/147253759/533358dc-0f98-4b1f-91de-ec315baab204)
 **CVE Identifier Validator and Vulnerability Finder**
 
-This Python script allows users to validate Common Vulnerabilities and Exposures (CVE) identifiers and find information about vulnerabilities associated with valid CVE IDs. The script checks whether the provided CVE ID follows the correct format and validates the year part. If the input is valid, it utilizes a function from a separate module named vuln to retrieve information about the vulnerability.
+This app allows users to validate Common Vulnerabilities and Exposures (CVE) identifiers and find information about vulnerabilities associated with valid CVE IDs. 
 
 _Prerequisites_
 
@@ -11,7 +11,6 @@ Before running the script, ensure that you have Python installed on your system.
 _Usage_
 
 Clone the repository or download the script file (cve_validator.py) to your local machine.
-
 Ensure that the vuln module is present in the same directory as the script, or it is accessible from the Python path.
 
 Open a terminal or command prompt.
