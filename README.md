@@ -12,7 +12,7 @@
 
 ## _Prerequisites_
 
-Before running the code, ensure that you have Python installed on your system. Additionally, make sure that the vuln module is available and contains the vuln_finder function.
+Before running the code, ensure that you have Python installed on your system.
 
 ## _Usage_
 * Install requirements package from requirements.txt. (pip install -r requirements.txt)
