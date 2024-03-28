@@ -1,5 +1,4 @@
-# GROUP_E - **CVE Identifier Validator and Vulnerability Finder**
-![image](https://github.com/Cavid370/GROUP_E/assets/147253759/533358dc-0f98-4b1f-91de-ec315baab204)
+# **CVE Identifier Validator and Vulnerability Finder**
 
 ## **What is CVE?**
 * CVE stands for Common Vulnerabilities and Exposures. It is a dictionary of publicly known information security vulnerabilities and exposures. Each CVE entry represents a unique identifier for a specific vulnerability, along with detailed information about the vulnerability, including its description, affected software, severity level, and any available remediation steps.
