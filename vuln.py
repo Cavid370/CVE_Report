@@ -1,34 +1,50 @@
-import requests
-from bs4 import BeautifulSoup
-import csv
-from io import StringIO
-import webbrowser
+import requests  # Import the requests module for sending HTTP requests
+from bs4 import BeautifulSoup  # Import BeautifulSoup for web scraping
+import csv  # Import the csv module for CSV file handling
+from io import StringIO  # Import StringIO for handling in-memory file-like objects
+import webbrowser  # Import webbrowser for opening URLs in the web browser
+
 
 def vuln_finder(cve):
+    """
+    Find information about a CVE (Common Vulnerabilities and Exposures) ID.
+
+    Args:
+        cve (str): CVE ID to search for.
+
+    Returns:
+        str: Information about the CVE if found, otherwise an error message.
+    """
+    # Define headers to mimic a web browser's user agent
     headers = {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
     }
+    # Send a GET request to the CVE website to check if the CVE exists
     request = requests.get('https://cve.mitre.org/cgi-bin/cvename.cgi?name=' + cve, headers=headers)
+    # Parse the HTML content of the response
     soup = BeautifulSoup(request.text, 'html.parser')
+    # Check if the CVE exists on the website
     exists = soup.find("h2").text.strip()
     result = ""
-    cve_parse_result = cve_parse_json(cve)
-    vuln_nist_result = vuln_nist(cve)
+
+    # If the CVE does not exist on the website, search for it in other sources
     if exists == f"ERROR: Couldn't find '{cve}'":
-        result += fr"There is no CVE with ID '{cve}' on 'https://cve.mitre.org/cgi-bin/cvename.cgi?name={cve}'" + '\n'
+        # Check if the CVE exists in the NVD JSON feed
+        cve_parse_result = cve_parse_json(cve)
         if not cve_parse_result:
             result += r"We can't find CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
-
+        # Check if the CVE exists in the NVD website
+        vuln_nist_result = vuln_nist(cve)
         if not vuln_nist_result:
-            result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}' !!" + '\n'
+            result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
         else:
             result += rf"We found it CVE in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
             return result
     else:
-
-        if not cve_parse_result:
+        # If the CVE exists on the website, retrieve its information
+        if not cve_parse_json(cve):
             result += r"We can't find CVE in 'https://services.nvd.nist.gov/rest/json/cves/2.0' !!" + '\n'
-            if not vuln_nist_result:
+            if not vuln_nist(cve):
                 result += rf"We can't find CVE either in 'https://nvd.nist.gov/vuln/detail/{cve}'" + '\n'
                 result += "Nothing found"
                 return result
@@ -41,10 +57,19 @@ def vuln_finder(cve):
 
 
 def cve_parse_json(cve_id):
+    """
+    Parse JSON data from the NVD (National Vulnerability Database) to find information about a CVE.
+
+    Args:
+        cve_id (str): CVE ID to search for.
+
+    Returns:
+        tuple or bool: Information about the CVE if found, False otherwise.
+    """
     api_url = r"https://services.nvd.nist.gov/rest/json/cves/2.0"
-    # Send GET request
+    # Send a GET request to the NVD API to retrieve JSON data
     response = requests.get(api_url)
-    # Check for successful response
+    # Check if the response is successful
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
@@ -58,7 +83,7 @@ def cve_parse_json(cve_id):
                 descriptions1 = descriptions[0]["value"]
                 references = cve.get("references")
 
-                # CVSS2 score
+                # Extract CVSS2 score and other metrics
                 metrics = cve.get("metrics")
                 metrics_data = metrics["cvssMetricV2"][0]["cvssData"]
                 cvss_score = metrics_data["baseScore"]
@@ -74,14 +99,21 @@ def cve_parse_json(cve_id):
                 return cve_id, sourceIdentifier, descriptions1, cvss_score, severity, access_vector, access_complex, authentication, confidentialityImpact, integrityImpact, availabilityImpact  # Exit the function once CVE is found
 
         return False
-
-
     else:
         print(f"Error: API request failed with status code {response.status_code}")
         return False
 
 
 def vuln_nist(cve):
+    """
+    Retrieve information about a CVE from the NVD (National Vulnerability Database) website.
+
+    Args:
+        cve (str): CVE ID to search for.
+
+    Returns:
+        tuple or bool: Information about the CVE if found, False otherwise.
+    """
     headers = {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'}
     request = requests.get('https://nvd.nist.gov/vuln/detail/' + cve, headers=headers)
@@ -166,7 +198,7 @@ def related_exp(cve):
     return exploits
 
 
-# Function to open top references
+# Function to open-top references
 def open_top_references(cve_id):
     # Define a list of reference URLs
     reference_urls = [
